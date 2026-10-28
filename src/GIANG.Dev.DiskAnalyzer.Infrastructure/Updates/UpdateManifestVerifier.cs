@@ -100,8 +100,10 @@ public class UpdateManifestVerifier : IUpdateManifestVerifier
             return false;
         }
 
-        // 2. Ràng buộc kiến trúc vi xử lý (win-x64)
-        if (!string.Equals(manifest.Architecture, "win-x64", StringComparison.OrdinalIgnoreCase))
+        // 2. Ràng buộc kiến trúc vi xử lý (win-x64 hoặc x64)
+        bool isCompatibleArch = string.Equals(manifest.Architecture, "win-x64", StringComparison.OrdinalIgnoreCase) ||
+                                string.Equals(manifest.Architecture, "x64", StringComparison.OrdinalIgnoreCase);
+        if (!isCompatibleArch)
         {
             errorMessage = $"Kiến trúc của gói cập nhật ({manifest.Architecture}) không tương thích với hệ thống hiện tại (yêu cầu win-x64).";
             return false;

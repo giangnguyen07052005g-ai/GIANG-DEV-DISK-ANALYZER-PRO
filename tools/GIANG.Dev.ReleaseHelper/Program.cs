@@ -1,4 +1,6 @@
 using System.Diagnostics;
+using System.Net.Http.Headers;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -14,7 +16,7 @@ public class Program
     {
         Console.OutputEncoding = Encoding.UTF8;
         Console.WriteLine("==================================================================");
-        Console.WriteLine("  GIANG DEV DISK ANALYZER PRO — RELEASE PREPARATION TOOL");
+        Console.WriteLine("  GIANG DEV DISK ANALYZER PRO — FULL AUTOMATION RELEASE & PUBLISH");
         Console.WriteLine("==================================================================");
 
         string rootDir = FindSolutionRoot();
@@ -23,8 +25,9 @@ public class Program
         string version = "1.0.4";
         string? customExe = null;
         string? notes = null;
-        string? owner = null;
-        string? repo = null;
+        string owner = "giangnguyen07052005g-ai";
+        string repo = "GIANG-DEV-DISK-ANALYZER-PRO";
+        bool autoPublish = true;
 
         for (int i = 0; i < args.Length; i++)
         {
@@ -33,9 +36,11 @@ public class Program
             else if (args[i] == "--notes" && i + 1 < args.Length) notes = args[++i];
             else if (args[i] == "--owner" && i + 1 < args.Length) owner = args[++i];
             else if (args[i] == "--repo" && i + 1 < args.Length) repo = args[++i];
+            else if (args[i] == "--no-publish") autoPublish = false;
         }
 
         Console.WriteLine($"[+] Target Release Version: v{version}");
+        Console.WriteLine($"[+] Owner: {owner} | Repo: {repo}");
 
         // 1. Quản lý Khóa ký số ECDSA NIST P-256
         string keysDir = Path.Combine(rootDir, "scripts", "keys");
@@ -88,7 +93,6 @@ public class Program
         }
         else
         {
-            // Kiểm tra publish\win-x64\GIANG.Dev.DiskAnalyzer.App.exe trước
             string prebuiltExe = Path.Combine(rootDir, "publish", "win-x64", "GIANG.Dev.DiskAnalyzer.App.exe");
             if (File.Exists(prebuiltExe))
             {
@@ -139,7 +143,7 @@ public class Program
             version = version,
             releaseDate = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ"),
             minSupportedVersion = "1.0.0",
-            architecture = "x64",
+            architecture = "win-x64",
             packageSha256 = sha256Hex,
             packageSize = exeSize,
             assetFileName = "GIANG-DEV-DISK-ANALYZER-PRO-Setup.exe",
@@ -183,11 +187,29 @@ public class Program
         Console.WriteLine("==================================================================");
         Console.ResetColor();
 
-        Console.WriteLine("\n[+] 3 TỆP CẦN TẢI LÊN GITHUB RELEASE:");
-        Console.WriteLine($"  1. {Path.GetFileName(targetExePath)} ({exeSize / 1024.0 / 1024.0:F2} MB)");
-        Console.WriteLine($"  2. {Path.GetFileName(manifestFile)}");
-        Console.WriteLine($"  3. {Path.GetFileName(sigFile)}");
-        Console.WriteLine($"\n[+] Thư mục chứa tệp: {outputDir}");
+        // 7. TỰ ĐỘNG ĐẨY LÊN GITHUB & TẠO RELEASE NẾU CÓ TOKEN
+        if (autoPublish)
+        {
+            Console.WriteLine("\n[+] Đang tìm kiếm xác thực GitHub trong hệ thống Windows...");
+            string? token = GetStoredGitHubToken(owner);
+            if (string.IsNullOrEmpty(token))
+            {
+                Console.WriteLine("[!] Không tìm thấy GitHub Personal Access Token trong Windows Credential Manager.");
+                Console.WriteLine("[+] Vui lòng sử dụng GitHub Desktop để bấm 'Push' và kéo thả 3 file lên Web.");
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine($"[+] ĐÃ TÌM THẤY GITHUB TOKEN! BẮT ĐẦU ĐẨY LÊN GITHUB HOÀN TOÀN TỰ ĐỘNG...");
+                Console.ResetColor();
+
+                // Đẩy git commits
+                PushGitCommitsWithToken(rootDir, owner, repo, token);
+
+                // Tạo GitHub Release và Upload 3 assets
+                await CreateReleaseAndUploadAssetsAsync(owner, repo, version, token, targetExePath, manifestFile, sigFile, notes);
+            }
+        }
 
         return 0;
     }
@@ -213,7 +235,6 @@ public class Program
         {
             string code = File.ReadAllText(configPath);
 
-            // Cập nhật PublicKey
             string currentKeyPattern = "public string PublicKeyBase64 { get; set; } = ";
             int idx = code.IndexOf(currentKeyPattern);
             if (idx >= 0)
@@ -225,13 +246,11 @@ public class Program
                     string oldKey = code.Substring(startQuote + 1, endQuote - startQuote - 1);
                     if (oldKey != publicKeyBase64)
                     {
-                        Console.WriteLine("[+] Updating PublicKeyBase64 in GitHubUpdateOptions.cs...");
                         code = code.Substring(0, startQuote + 1) + publicKeyBase64 + code.Substring(endQuote);
                     }
                 }
             }
 
-            // Cập nhật Owner nếu được cung cấp
             if (!string.IsNullOrWhiteSpace(owner))
             {
                 string ownerPattern = "public string GitHubOwner { get; set; } = ";
@@ -242,13 +261,11 @@ public class Program
                     int endQuote = code.IndexOf('"', startQuote + 1);
                     if (startQuote > 0 && endQuote > startQuote)
                     {
-                        Console.WriteLine($"[+] Updating GitHubOwner to '{owner}' in GitHubUpdateOptions.cs...");
                         code = code.Substring(0, startQuote + 1) + owner.Trim() + code.Substring(endQuote);
                     }
                 }
             }
 
-            // Cập nhật Repo nếu được cung cấp
             if (!string.IsNullOrWhiteSpace(repo))
             {
                 string repoPattern = "public string Repository { get; set; } = ";
@@ -259,7 +276,6 @@ public class Program
                     int endQuote = code.IndexOf('"', startQuote + 1);
                     if (startQuote > 0 && endQuote > startQuote)
                     {
-                        Console.WriteLine($"[+] Updating Repository to '{repo}' in GitHubUpdateOptions.cs...");
                         code = code.Substring(0, startQuote + 1) + repo.Trim() + code.Substring(endQuote);
                     }
                 }
@@ -268,11 +284,10 @@ public class Program
             File.WriteAllText(configPath, code, Encoding.UTF8);
         }
 
-        // Tạo/Cập nhật github-update.json trong thư mục gốc dự án
         string jsonConfigPath = Path.Combine(rootDir, "github-update.json");
         var jsonConfig = new
         {
-            GitHubOwner = owner ?? "YOUR_GITHUB_USERNAME",
+            GitHubOwner = owner ?? "giangnguyen07052005g-ai",
             Repository = repo ?? "GIANG-DEV-DISK-ANALYZER-PRO",
             Channel = "Stable",
             PublicKeyBase64 = publicKeyBase64
@@ -307,4 +322,251 @@ public class Program
         process.WaitForExit();
         return process.ExitCode;
     }
+
+    #region Windows Credential & GitHub Push Automation
+
+    [DllImport("Advapi32.dll", EntryPoint = "CredReadW", CharSet = CharSet.Unicode, SetLastError = true)]
+    private static extern bool CredRead(string target, int type, int reservedFlag, out IntPtr credentialPtr);
+
+    [DllImport("Advapi32.dll", EntryPoint = "CredFree", SetLastError = true)]
+    private static extern void CredFree(IntPtr credentialPtr);
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+    private struct CREDENTIAL
+    {
+        public int Flags;
+        public int Type;
+        public string TargetName;
+        public string Comment;
+        public System.Runtime.InteropServices.ComTypes.FILETIME LastWritten;
+        public int CredentialBlobSize;
+        public IntPtr CredentialBlob;
+        public int Persist;
+        public int AttributeCount;
+        public IntPtr Attributes;
+        public string TargetAlias;
+        public string UserName;
+    }
+
+    private static string? GetStoredGitHubToken(string owner)
+    {
+        string[] targets = {
+            $"GitHub - https://api.github.com/{owner}",
+            "git:https://github.com",
+            "LegacyGeneric:target=GitHub - https://api.github.com/" + owner
+        };
+
+        foreach (var target in targets)
+        {
+            if (CredRead(target, 1 /* CRED_TYPE_GENERIC */, 0, out IntPtr ptr))
+            {
+                try
+                {
+                    var cred = Marshal.PtrToStructure<CREDENTIAL>(ptr);
+                    if (cred.CredentialBlobSize > 0 && cred.CredentialBlob != IntPtr.Zero)
+                    {
+                        byte[] bytes = new byte[cred.CredentialBlobSize];
+                        Marshal.Copy(cred.CredentialBlob, bytes, 0, cred.CredentialBlobSize);
+
+                        string utf8 = Encoding.UTF8.GetString(bytes).Trim();
+                        if (utf8.Length > 20) return utf8;
+
+                        string unicode = Encoding.Unicode.GetString(bytes).Trim();
+                        if (unicode.Length > 20) return unicode;
+                    }
+                }
+                finally
+                {
+                    CredFree(ptr);
+                }
+            }
+        }
+        return null;
+    }
+
+    private static void PushGitCommitsWithToken(string rootDir, string owner, string repo, string token)
+    {
+        string gitExe = FindGitExe();
+        Console.WriteLine($"[+] Using Git: {gitExe}");
+
+        string authUrl = $"https://x-access-token:{token}@github.com/{owner}/{repo}.git";
+
+        // Set remote URL with token
+        RunCommand(gitExe, rootDir, $"remote set-url origin \"{authUrl}\"");
+
+        // Push main branch
+        Console.WriteLine("[+] Pushing branch 'main' to GitHub...");
+        int pushRes = RunCommand(gitExe, rootDir, "push -u origin main --force");
+        if (pushRes == 0)
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("[+] ĐẨY CODE LÊN GITHUB THÀNH CÔNG RỰC RỠ!");
+            Console.ResetColor();
+        }
+        else
+        {
+            Console.WriteLine("[!] Push gặp cảnh báo hoặc cần kiểm tra lại quyền.");
+        }
+
+        // Restore clean public URL without embedding token in git config
+        string cleanUrl = $"https://github.com/{owner}/{repo}.git";
+        RunCommand(gitExe, rootDir, $"remote set-url origin \"{cleanUrl}\"");
+    }
+
+    private static string FindGitExe()
+    {
+        string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        string ghDesktopGit = Path.Combine(localAppData, "GitHubDesktop", "app-3.6.10", "resources", "app", "git", "cmd", "git.exe");
+        if (File.Exists(ghDesktopGit)) return ghDesktopGit;
+
+        // Search in GitHubDesktop directory
+        string ghDesktopDir = Path.Combine(localAppData, "GitHubDesktop");
+        if (Directory.Exists(ghDesktopDir))
+        {
+            var found = Directory.GetFiles(ghDesktopDir, "git.exe", SearchOption.AllDirectories);
+            if (found.Length > 0) return found[0];
+        }
+
+        return "git";
+    }
+
+    private static int RunCommand(string exe, string workingDir, string args)
+    {
+        var psi = new ProcessStartInfo
+        {
+            FileName = exe,
+            Arguments = args,
+            WorkingDirectory = workingDir,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+            CreateNoWindow = true
+        };
+        var p = Process.Start(psi);
+        if (p == null) return 1;
+        p.WaitForExit();
+        return p.ExitCode;
+    }
+
+    private static async Task CreateReleaseAndUploadAssetsAsync(
+        string owner, string repo, string version, string token,
+        string exePath, string manifestPath, string sigPath, string? notes)
+    {
+        using var client = new HttpClient();
+        client.DefaultRequestHeaders.Add("User-Agent", "GIANG-DEV-DISK-ANALYZER-PRO-ReleaseHelper");
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github.v3+json"));
+
+        string tagName = $"v{version}";
+        string releaseTitle = $"GIANG DEV DISK ANALYZER PRO v{version}";
+        string body = notes ?? $"Bản phát hành chính thức v{version} với đầy đủ tính năng quét ổ đĩa, săn file lớn, tìm trùng lặp, xóa file bảo mật và tự động cập nhật qua GitHub Releases.";
+
+        Console.WriteLine($"[+] Kiểm tra xem bản Release {tagName} đã tồn tại chưa...");
+        string getReleaseUrl = $"https://api.github.com/repos/{owner}/{repo}/releases/tags/{tagName}";
+        var getResp = await client.GetAsync(getReleaseUrl);
+
+        long releaseId = 0;
+        string? uploadUrlTemplate = null;
+
+        if (getResp.IsSuccessStatusCode)
+        {
+            string existingJson = await getResp.Content.ReadAsStringAsync();
+            using var doc = JsonDocument.Parse(existingJson);
+            releaseId = doc.RootElement.GetProperty("id").GetInt64();
+            uploadUrlTemplate = doc.RootElement.GetProperty("upload_url").GetString();
+            Console.WriteLine($"[+] Bản Release {tagName} đã tồn tại với ID: {releaseId}");
+        }
+        else
+        {
+            Console.WriteLine($"[+] Tạo mới GitHub Release: {tagName}...");
+            string createUrl = $"https://api.github.com/repos/{owner}/{repo}/releases";
+            var payload = new
+            {
+                tag_name = tagName,
+                target_commitish = "main",
+                name = releaseTitle,
+                body = body,
+                draft = false,
+                prerelease = false
+            };
+
+            var content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
+            var postResp = await client.PostAsync(createUrl, content);
+            if (!postResp.IsSuccessStatusCode)
+            {
+                string err = await postResp.Content.ReadAsStringAsync();
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"[!] Không thể tạo Release qua API: {postResp.StatusCode} - {err}");
+                Console.ResetColor();
+                return;
+            }
+
+            string respJson = await postResp.Content.ReadAsStringAsync();
+            using var doc = JsonDocument.Parse(respJson);
+            releaseId = doc.RootElement.GetProperty("id").GetInt64();
+            uploadUrlTemplate = doc.RootElement.GetProperty("upload_url").GetString();
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"[+] Đã tạo Release thành công! ID: {releaseId}");
+            Console.ResetColor();
+        }
+
+        // Tải 3 tệp lên Release
+        await UploadAssetAsync(client, owner, repo, releaseId, exePath, "application/octet-stream");
+        await UploadAssetAsync(client, owner, repo, releaseId, manifestPath, "application/json");
+        await UploadAssetAsync(client, owner, repo, releaseId, sigPath, "application/octet-stream");
+
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine("\n==================================================================");
+        Console.WriteLine("  TẤT CẢ ĐÃ ĐƯỢC ĐĂNG TẢI LÊN GITHUB HOÀN TẤT 100%!");
+        Console.WriteLine($"  Xem trực tiếp tại: https://github.com/{owner}/{repo}/releases/tag/{tagName}");
+        Console.WriteLine("==================================================================");
+        Console.ResetColor();
+    }
+
+    private static async Task UploadAssetAsync(HttpClient client, string owner, string repo, long releaseId, string filePath, string contentType)
+    {
+        string fileName = Path.GetFileName(filePath);
+        Console.WriteLine($"[+] Đang tải lên: {fileName} ({new FileInfo(filePath).Length / 1024.0 / 1024.0:F2} MB)...");
+
+        // Delete existing asset with same name if any
+        string listAssetsUrl = $"https://api.github.com/repos/{owner}/{repo}/releases/{releaseId}/assets";
+        var listResp = await client.GetAsync(listAssetsUrl);
+        if (listResp.IsSuccessStatusCode)
+        {
+            string listJson = await listResp.Content.ReadAsStringAsync();
+            using var doc = JsonDocument.Parse(listJson);
+            foreach (var el in doc.RootElement.EnumerateArray())
+            {
+                if (el.GetProperty("name").GetString() == fileName)
+                {
+                    long assetId = el.GetProperty("id").GetInt64();
+                    Console.WriteLine($"    [i] Xóa tệp cũ cùng tên trên GitHub: ID {assetId}...");
+                    await client.DeleteAsync($"https://api.github.com/repos/{owner}/{repo}/releases/assets/{assetId}");
+                    break;
+                }
+            }
+        }
+
+        string uploadUrl = $"https://uploads.github.com/repos/{owner}/{repo}/releases/{releaseId}/assets?name={Uri.EscapeDataString(fileName)}";
+        byte[] fileBytes = await File.ReadAllBytesAsync(filePath);
+        using var byteContent = new ByteArrayContent(fileBytes);
+        byteContent.Headers.ContentType = new MediaTypeHeaderValue(contentType);
+
+        var uploadResp = await client.PostAsync(uploadUrl, byteContent);
+        if (uploadResp.IsSuccessStatusCode)
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"    [+] Tải lên thành công: {fileName}!");
+            Console.ResetColor();
+        }
+        else
+        {
+            string err = await uploadResp.Content.ReadAsStringAsync();
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"    [!] Tải lên thất bại: {uploadResp.StatusCode} - {err}");
+            Console.ResetColor();
+        }
+    }
+
+    #endregion
 }
