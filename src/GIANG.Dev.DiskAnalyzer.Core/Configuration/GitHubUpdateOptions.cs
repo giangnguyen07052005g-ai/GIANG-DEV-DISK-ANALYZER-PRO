@@ -1,4 +1,4 @@
-namespace GIANG.Dev.DiskAnalyzer.Core.Configuration;
+﻿namespace GIANG.Dev.DiskAnalyzer.Core.Configuration;
 
 /// <summary>
 /// Cấu hình tập trung cho tính năng Cập nhật tự động qua GitHub Releases (GitHub Auto Update).
