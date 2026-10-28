@@ -1,0 +1,85 @@
+<UserControl x:Class="GIANG.Dev.DiskAnalyzer.App.Views.Components.GiangDevLogo"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" 
+             d:DesignHeight="120" d:DesignWidth="120">
+
+    <Viewbox Stretch="Uniform">
+        <Canvas Width="100" Height="100" ClipToBounds="False">
+            <Canvas.Resources>
+                <!-- Neon Cyan to Purple Gradient -->
+                <LinearGradientBrush x:Key="NeonBrandGradient" StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#00F0FF" Offset="0.0" />
+                    <GradientStop Color="#7000FF" Offset="0.5" />
+                    <GradientStop Color="#A855F7" Offset="1.0" />
+                </LinearGradientBrush>
+
+                <LinearGradientBrush x:Key="DiskPlatterGradient" StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#162338" Offset="0.0" />
+                    <GradientStop Color="#0D131F" Offset="0.7" />
+                    <GradientStop Color="#060910" Offset="1.0" />
+                </LinearGradientBrush>
+
+                <RadialGradientBrush x:Key="CoreGlowBrush" Center="0.5,0.5" GradientOrigin="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
+                    <GradientStop Color="#6600F0FF" Offset="0.0" />
+                    <GradientStop Color="#22A855F7" Offset="0.6" />
+                    <GradientStop Color="#00000000" Offset="1.0" />
+                </RadialGradientBrush>
+            </Canvas.Resources>
+
+            <!-- Background Ambient Glow -->
+            <Ellipse Width="92" Height="92" Canvas.Left="4" Canvas.Top="4" Fill="{StaticResource CoreGlowBrush}" />
+
+            <!-- Outer Cyberpunk Hexagon Shield Badge -->
+            <!-- Vertices: (50, 4), (92, 26), (92, 74), (50, 96), (8, 74), (8, 26) -->
+            <Polygon Points="50,4 92,26 92,74 50,96 8,74 8,26"
+                     Fill="{StaticResource DiskPlatterGradient}"
+                     Stroke="{StaticResource NeonBrandGradient}"
+                     StrokeThickness="2.5"
+                     StrokeLineJoin="Round" />
+
+            <!-- Inner Accent Tech Border -->
+            <Polygon Points="50,11 85,29 85,71 50,89 15,71 15,29"
+                     Fill="Transparent"
+                     Stroke="#3300F0FF"
+                     StrokeThickness="1"
+                     StrokeDashArray="6 3" />
+
+            <!-- Hard Disk Platter Track Rings -->
+            <Ellipse Width="54" Height="54" Canvas.Left="23" Canvas.Top="23"
+                     Stroke="#44A855F7" StrokeThickness="1" Fill="#0A111C" />
+            <Ellipse Width="42" Height="42" Canvas.Left="29" Canvas.Top="29"
+                     Stroke="#5500F0FF" StrokeThickness="0.8" StrokeDashArray="4 2" />
+
+            <!-- Center Spindle Hub -->
+            <Ellipse Width="16" Height="16" Canvas.Left="42" Canvas.Top="42"
+                     Fill="#0B0F19" Stroke="{StaticResource NeonBrandGradient}" StrokeThickness="1.5" />
+            <Ellipse Width="6" Height="6" Canvas.Left="47" Canvas.Top="47"
+                     Fill="#00F0FF" />
+
+            <!-- Stylized Futuristic Monogram "G" (Left side) -->
+            <!-- Path drawing an angular cyber 'G' wrapped around the platter -->
+            <Path Data="M 44,28 L 27,28 L 22,34 L 22,66 L 27,72 L 44,72 L 48,68 L 48,52 L 35,52 L 35,58 L 42,58 L 42,66 L 28,66 L 27,65 L 27,35 L 28,34 L 44,34 Z"
+                  Fill="#00F0FF" />
+
+            <!-- Stylized Futuristic Monogram "D" (Right side) -->
+            <!-- Path drawing an angular cyber 'D' fitting against 'G' and shield -->
+            <Path Data="M 52,28 L 68,28 L 78,38 L 78,62 L 68,72 L 52,72 Z M 58,34 L 66,34 L 72,40 L 72,60 L 66,66 L 58,66 Z"
+                  Fill="#A855F7" />
+
+            <!-- Laser Scanner Ray / Read-Write Head -->
+            <Line X1="50" Y1="50" X2="80" Y2="20"
+                  Stroke="#00F0FF" StrokeThickness="1.8" StrokeStartLineCap="Round" />
+            <Ellipse Width="5" Height="5" Canvas.Left="78" Canvas.Top="18"
+                     Fill="#00F0FF" />
+
+            <!-- Corner Tech Tick Notches -->
+            <Line X1="50" Y1="4" X2="50" Y2="10" Stroke="#00F0FF" StrokeThickness="2" />
+            <Line X1="50" Y1="96" X2="50" Y2="90" Stroke="#A855F7" StrokeThickness="2" />
+            <Line X1="8" Y1="50" X2="14" Y2="50" Stroke="#00F0FF" StrokeThickness="1.5" />
+            <Line X1="92" Y1="50" X2="86" Y2="50" Stroke="#A855F7" StrokeThickness="1.5" />
+        </Canvas>
+    </Viewbox>
+</UserControl>

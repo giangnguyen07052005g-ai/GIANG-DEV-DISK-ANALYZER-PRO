@@ -1,0 +1,15 @@
+<Project>
+  <ItemGroup>
+    <KnownFrameworkReference Update="Microsoft.NETCore.App"
+                            TargetingPackVersion="8.0.33"
+                            LatestRuntimeFrameworkVersion="8.0.33" />
+    <KnownFrameworkReference Update="Microsoft.WindowsDesktop.App"
+                            TargetingPackVersion="8.0.33"
+                            LatestRuntimeFrameworkVersion="8.0.33" />
+    <KnownFrameworkReference Update="Microsoft.WindowsDesktop.App.WPF"
+                            TargetingPackVersion="8.0.33"
+                            LatestRuntimeFrameworkVersion="8.0.33" />
+    <KnownAppHostPack Update="Microsoft.NETCore.App"
+                      AppHostPackVersion="8.0.33" />
+  </ItemGroup>
+</Project>

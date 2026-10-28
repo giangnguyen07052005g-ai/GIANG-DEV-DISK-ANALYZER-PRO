@@ -1,0 +1,24 @@
+## Build and Visual Studio temp folders
+**/bin/
+**/obj/
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## Publish and release outputs (Keep them local, upload as Release Assets)
+publish/
+release-output/
+
+## CRITICAL SECURITY: Never commit private cryptographic keys
+scripts/keys/private_key.pkcs8.txt
+scripts/keys/*.key
+scripts/keys/*.pfx
+scripts/keys/*private*
+
+## Logs and scratch
+*.log
+scratch/
+test-results/
+TestResults/

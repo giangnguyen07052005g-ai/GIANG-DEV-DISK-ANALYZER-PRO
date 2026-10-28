@@ -1,0 +1,155 @@
+<UserControl x:Class="GIANG.Dev.DiskAnalyzer.App.Views.SafeCleanupView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" 
+             d:DesignHeight="720" d:DesignWidth="1000">
+
+    <Grid Margin="24,18,24,20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <TextBlock Grid.Row="0" Text="DỌN DẸP HỆ THỐNG AN TOÀN (SAFE STORAGE CLEANUP)" 
+                   FontSize="18" FontWeight="Bold" Foreground="{StaticResource BrushNeonGreen}" Margin="0,0,0,16" />
+
+        <!-- Control Bar -->
+        <Border Grid.Row="1" Background="{StaticResource BrushCard}" BorderBrush="{StaticResource BrushBorder}" BorderThickness="1" CornerRadius="8" Padding="16" Margin="0,0,0,14">
+            <StackPanel>
+                <!-- Categories Checkboxes -->
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <WrapPanel Grid.Column="0" VerticalAlignment="Center">
+                        <CheckBox Content="File tạm người dùng (%TEMP%)" IsChecked="{Binding IncludeUserTemp}" Style="{StaticResource CyberCheckBox}" Margin="0,0,18,0" />
+                        <CheckBox Content="Cache hình thu nhỏ (Thumbnails)" IsChecked="{Binding IncludeThumbnailsCache}" Style="{StaticResource CyberCheckBox}" Margin="0,0,18,0" />
+                        <CheckBox Content="Bộ nhớ đệm duyệt web (Browser Cache)" IsChecked="{Binding IncludeAppCache}" Style="{StaticResource CyberCheckBox}" Margin="0,0,18,0" />
+                        <CheckBox Content="Nhật ký cũ (.log > 24h)" IsChecked="{Binding IncludeOldLogs}" Style="{StaticResource CyberCheckBox}" />
+                    </WrapPanel>
+
+                    <Button Grid.Column="1" Style="{StaticResource NeonPrimaryButton}" Command="{Binding StartScanCommand}" Margin="0,0,10,0">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource IconScan}" Fill="{StaticResource BrushNeonCyan}" Width="14" Height="14" Stretch="Uniform" Margin="0,0,6,0" />
+                            <TextBlock Text="Quét mục dọn dẹp" />
+                        </StackPanel>
+                    </Button>
+
+                    <Button Grid.Column="2" Style="{StaticResource NeonDangerButton}" Command="{Binding CancelActionCommand}" IsEnabled="{Binding IsScanning}">
+                        <TextBlock Text="Hủy" />
+                    </Button>
+                </Grid>
+
+                <!-- Selection & Execution Summary -->
+                <Grid Margin="0,14,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource BrushNeonCyan}" TextTrimming="CharacterEllipsis" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Button Style="{StaticResource NeonSecondaryButton}" Command="{Binding SelectAllCommand}" Margin="0,0,6,0" Padding="10,6">
+                            <TextBlock Text="Chọn tất cả" />
+                        </Button>
+                        <Button Style="{StaticResource NeonSecondaryButton}" Command="{Binding DeselectAllCommand}" Margin="0,0,6,0" Padding="10,6">
+                            <TextBlock Text="Bỏ chọn hết" />
+                        </Button>
+                        <Button Style="{StaticResource NeonSecondaryButton}" 
+                                Command="{Binding MarkHighlightedCommand}" 
+                                CommandParameter="{Binding ElementName=CleanupDataGrid, Path=SelectedItems}" 
+                                Margin="0,0,16,0" Padding="10,6"
+                                ToolTip="Bôi đen nhiều dòng bằng chuột hoặc phím Shift/Ctrl rồi nhấn để chọn">
+                            <TextBlock Text="Chọn mục bôi đen" />
+                        </Button>
+
+                        <TextBlock Text="Đã chọn:" Foreground="{StaticResource BrushTextSecondary}" VerticalAlignment="Center" Margin="0,0,6,0" />
+                        <TextBlock Text="{Binding TotalSelectedFormatted}" FontWeight="Bold" FontSize="15" Foreground="{StaticResource BrushNeonGreen}" VerticalAlignment="Center" Margin="0,0,16,0" />
+
+                        <Button Style="{StaticResource NeonDangerButton}" 
+                                Command="{Binding ExecuteSafeCleanupCommand}" 
+                                CommandParameter="{Binding ElementName=CleanupDataGrid, Path=SelectedItems}" 
+                                Padding="16,8">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="{StaticResource IconTrash}" Fill="{StaticResource BrushNeonRed}" Width="14" Height="14" Stretch="Uniform" Margin="0,0,8,0" />
+                                <TextBlock Text="Xác nhận dọn dẹp (Recycle Bin)" FontWeight="Bold" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+        </Border>
+
+        <!-- Progress Bar -->
+        <ProgressBar Grid.Row="2" Style="{StaticResource CyberProgressBar}" IsIndeterminate="{Binding IsScanning}" Height="4" Margin="0,0,0,14" />
+
+        <!-- Cleanable Items DataGrid -->
+        <Border Grid.Row="3" Background="{StaticResource BrushPanel}" BorderBrush="{StaticResource BrushBorder}" BorderThickness="1" CornerRadius="8" Padding="14">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Text="{Binding CleanupItems.Count, StringFormat={}DANH SÁCH FILE CÓ THỂ DỌN DẸP ({0} MỤC)}" FontWeight="Bold" FontSize="13" Foreground="{StaticResource BrushNeonGreen}" Margin="0,0,0,10" />
+
+                <Grid Grid.Row="1">
+                    <DataGrid x:Name="CleanupDataGrid" 
+                              ItemsSource="{Binding CleanupItems}" 
+                              SelectedItem="{Binding SelectedItem}"
+                              SelectionMode="Extended"
+                              SelectionUnit="FullRow"
+                              PreviewKeyDown="CleanupDataGrid_PreviewKeyDown">
+                        <DataGrid.Columns>
+                            <DataGridCheckBoxColumn Header="CHỌN" Binding="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" Width="55" />
+                            <DataGridTextColumn Header="DANH MỤC" Binding="{Binding CategoryFormatted}" Width="160" />
+                            <DataGridTextColumn Header="MỨC ĐỘ AN TOÀN" Binding="{Binding RiskFormatted}" Width="130" />
+                            <DataGridTextColumn Header="DUNG LƯỢNG" Binding="{Binding SizeFormatted}" Width="110" />
+                            <DataGridTextColumn Header="TÊN FILE" Binding="{Binding FileName}" Width="180" />
+                            <DataGridTextColumn Header="ĐƯỜNG DẪN ĐẦY ĐỦ" Binding="{Binding FullPath}" Width="*" />
+                        </DataGrid.Columns>
+                        <DataGrid.ContextMenu>
+                            <ContextMenu Background="{StaticResource BrushPanel}" Foreground="{StaticResource BrushTextPrimary}">
+                                <MenuItem Header="✓ Đánh dấu chọn (các dòng bôi đen)" 
+                                          Command="{Binding MarkHighlightedCommand}" 
+                                          CommandParameter="{Binding ElementName=CleanupDataGrid, Path=SelectedItems}" />
+                                <MenuItem Header="✗ Bỏ đánh dấu chọn (các dòng bôi đen)" 
+                                          Command="{Binding UnmarkHighlightedCommand}" 
+                                          CommandParameter="{Binding ElementName=CleanupDataGrid, Path=SelectedItems}" />
+                                <Separator Background="{StaticResource BrushBorder}" />
+                                <MenuItem Header="Mở vị trí trong File Explorer" Command="{Binding OpenInExplorerCommand}" CommandParameter="{Binding SelectedItem}" />
+                                <Separator Background="{StaticResource BrushBorder}" />
+                                <MenuItem Header="Dọn dẹp các mục đã chọn / bôi đen" 
+                                          Command="{Binding ExecuteSafeCleanupCommand}" 
+                                          CommandParameter="{Binding ElementName=CleanupDataGrid, Path=SelectedItems}" 
+                                          Foreground="{StaticResource BrushNeonRed}" />
+                            </ContextMenu>
+                        </DataGrid.ContextMenu>
+                    </DataGrid>
+
+                    <!-- Empty State Overlay -->
+                    <Border Background="{StaticResource BrushPanel}"
+                            Visibility="{Binding CleanupItems.Count, Converter={StaticResource EmptyToVisibilityConverter}}"
+                            IsHitTestVisible="False">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20">
+                            <Path Data="{StaticResource IconSafeCleanup}" Fill="{StaticResource BrushBorderBright}" Width="48" Height="48" Stretch="Uniform" HorizontalAlignment="Center" Margin="0,0,0,16" />
+                            <TextBlock Text="CHƯA CÓ MỤC DỌN DẸP NÀO ĐƯỢC QUÉT" FontWeight="Bold" FontSize="15" Foreground="{StaticResource BrushTextSecondary}" HorizontalAlignment="Center" Margin="0,0,0,8" />
+                            <TextBlock Text="Chọn các danh mục muốn quét dọn dẹp ở trên rồi nhấn 'Quét mục dọn dẹp'." Foreground="{StaticResource BrushTextMuted}" HorizontalAlignment="Center" TextAlignment="Center" MaxWidth="450" />
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

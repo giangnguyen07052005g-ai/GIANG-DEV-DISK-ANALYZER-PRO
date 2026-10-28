@@ -1,0 +1,14 @@
+<Application x:Class="GIANG.Dev.DiskAnalyzer.App.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:GIANG.Dev.DiskAnalyzer.App">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/GIANG.Dev.DiskAnalyzer.App;component/Themes/Colors.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/GIANG.Dev.DiskAnalyzer.App;component/Themes/Icons.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/GIANG.Dev.DiskAnalyzer.App;component/Themes/Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

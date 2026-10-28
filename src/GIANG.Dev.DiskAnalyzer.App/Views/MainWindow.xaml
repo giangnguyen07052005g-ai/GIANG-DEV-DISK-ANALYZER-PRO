@@ -1,0 +1,300 @@
+<Window x:Class="GIANG.Dev.DiskAnalyzer.App.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:views="clr-namespace:GIANG.Dev.DiskAnalyzer.App.Views"
+        xmlns:viewmodels="clr-namespace:GIANG.Dev.DiskAnalyzer.App.ViewModels"
+        xmlns:components="clr-namespace:GIANG.Dev.DiskAnalyzer.App.Views.Components"
+        mc:Ignorable="d"
+        Title="GIANG DEV DISK ANALYZER PRO" 
+        Height="800" Width="1280"
+        MinHeight="720" MinWidth="1100"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        AllowsTransparency="False"
+        Background="#0B0F19">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/GIANG.Dev.DiskAnalyzer.App;component/Themes/Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="42" ResizeBorderThickness="6" GlassFrameThickness="0" CornerRadius="0" />
+    </WindowChrome.WindowChrome>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <!-- Custom Title Bar -->
+            <RowDefinition Height="42" />
+            <!-- Main Body -->
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Custom Cyberpunk Title Bar -->
+        <Border Grid.Row="0" Background="{StaticResource BrushBgSidebar}" BorderBrush="{StaticResource BrushBorder}" BorderThickness="0,0,0,1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Brand & Title -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="14,0,0,0">
+                    <components:GiangDevLogo Width="22" Height="22" Margin="0,0,8,0" VerticalAlignment="Center" />
+                    <TextBlock Text="GIANG DEV" FontWeight="Black" FontSize="13.5" Foreground="{StaticResource BrushNeonCyan}" VerticalAlignment="Center" />
+                    <TextBlock Text=" DISK ANALYZER PRO" FontWeight="Bold" FontSize="12.5" Foreground="{StaticResource BrushTextPrimary}" Margin="2,0,10,0" VerticalAlignment="Center" />
+                    <Border Background="#162338" BorderBrush="{StaticResource BrushNeonCyan}" BorderThickness="1" CornerRadius="4" Padding="6,2" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding AppVersion}" FontSize="10" FontWeight="Bold" Foreground="{StaticResource BrushNeonCyan}" />
+                    </Border>
+                    <!-- Admin Indicator Badge -->
+                    <Border Background="#281A08" BorderBrush="{StaticResource BrushNeonAmber}" BorderThickness="1" CornerRadius="4" Padding="6,2" Margin="6,0,0,0" VerticalAlignment="Center"
+                            ToolTip="Ứng dụng đang hoạt động với đầy đủ quyền Quản trị viên (Administrator / Elevated)">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource IconSafeCleanup}" Fill="{StaticResource BrushNeonAmber}" Width="10" Height="10" Stretch="Uniform" Margin="0,0,4,0" VerticalAlignment="Center" />
+                            <TextBlock Text="ADMIN" FontSize="9.5" FontWeight="Black" Foreground="{StaticResource BrushNeonAmber}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- Status Ticker in center -->
+                <TextBlock Grid.Column="1" Text="{Binding GlobalStatusText}" Foreground="{StaticResource BrushTextSecondary}" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+
+                <!-- Window Control Buttons -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" WindowChrome.IsHitTestVisibleInChrome="True">
+                    <!-- Minimize -->
+                    <Button Style="{StaticResource NeonSecondaryButton}" 
+                            Command="{Binding MinimizeWindowCommand}" 
+                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
+                            Width="42" Height="42" Padding="0" BorderThickness="0" Background="Transparent">
+                        <Path Data="{StaticResource IconMinimize}" Fill="{StaticResource BrushTextSecondary}" Width="10" Height="2" Stretch="Uniform" />
+                    </Button>
+                    <!-- Maximize -->
+                    <Button Style="{StaticResource NeonSecondaryButton}" 
+                            Command="{Binding MaximizeWindowCommand}" 
+                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
+                            Width="42" Height="42" Padding="0" BorderThickness="0" Background="Transparent">
+                        <Path Data="{StaticResource IconMaximize}" Fill="{StaticResource BrushTextSecondary}" Width="10" Height="10" Stretch="Uniform" />
+                    </Button>
+                    <!-- Close -->
+                    <Button Style="{StaticResource NeonSecondaryButton}" 
+                            Command="{Binding CloseWindowCommand}" 
+                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
+                            Width="42" Height="42" Padding="0" BorderThickness="0" Background="Transparent">
+                        <Path Data="{StaticResource IconClose}" Fill="{StaticResource BrushNeonRed}" Width="11" Height="11" Stretch="Uniform" />
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Main Body: Sidebar Navigation + Content Area -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <!-- Sidebar -->
+                <ColumnDefinition Width="230" />
+                <!-- Content Area -->
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Sidebar Navigation -->
+            <Border Grid.Column="0" Background="{StaticResource BrushBgSidebar}" BorderBrush="{StaticResource BrushBorder}" BorderThickness="0,0,1,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <!-- Top Brand Header in Sidebar -->
+                    <Border Grid.Row="0" BorderBrush="{StaticResource BrushBorder}" BorderThickness="0,0,0,1" Padding="16,14">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <components:GiangDevLogo Width="36" Height="36" Margin="0,0,10,0" VerticalAlignment="Center" />
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <TextBlock Text="GIANG DEV" FontWeight="Black" FontSize="15" Foreground="{StaticResource BrushNeonCyan}" />
+                                <TextBlock Text="DISK ANALYZER PRO" FontWeight="Bold" FontSize="9.5" Foreground="{StaticResource BrushTextSecondary}" Margin="0,2,0,0" />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                        <StackPanel Margin="0,12,0,12">
+                            <!-- Dashboard -->
+                            <RadioButton Style="{StaticResource NavMenuButton}" 
+                                         GroupName="SidebarNav"
+                                         IsChecked="{Binding CurrentViewName, Converter={StaticResource StringEqualsConverter}, ConverterParameter=Dashboard, Mode=TwoWay}" 
+                                         Command="{Binding NavigateCommand}" CommandParameter="Dashboard">
+                                <StackPanel Orientation="Horizontal">
+                                    <Path Data="{StaticResource IconDashboard}" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" Width="15" Height="15" Stretch="Uniform" Margin="0,0,12,0" />
+                                    <TextBlock Text="Bảng điều khiển" />
+                                </StackPanel>
+                            </RadioButton>
+
+                            <!-- Storage Scan -->
+                            <RadioButton Style="{StaticResource NavMenuButton}" 
+                                         GroupName="SidebarNav"
+                                         IsChecked="{Binding CurrentViewName, Converter={StaticResource StringEqualsConverter}, ConverterParameter=StorageScan, Mode=TwoWay}"
+                                         Command="{Binding NavigateCommand}" CommandParameter="StorageScan">
+                                <StackPanel Orientation="Horizontal">
+                                    <Path Data="{StaticResource IconScan}" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" Width="15" Height="15" Stretch="Uniform" Margin="0,0,12,0" />
+                                    <TextBlock Text="Phân tích ổ đĩa" />
+                                </StackPanel>
+                            </RadioButton>
+
+                            <!-- Big File Hunter -->
+                            <RadioButton Style="{StaticResource NavMenuButton}" 
+                                         GroupName="SidebarNav"
+                                         IsChecked="{Binding CurrentViewName, Converter={StaticResource StringEqualsConverter}, ConverterParameter=BigFiles, Mode=TwoWay}"
+                                         Command="{Binding NavigateCommand}" CommandParameter="BigFiles">
+                                <StackPanel Orientation="Horizontal">
+                                    <Path Data="{StaticResource IconBigFiles}" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" Width="15" Height="15" Stretch="Uniform" Margin="0,0,12,0" />
+                                    <TextBlock Text="Săn file lớn" />
+                                </StackPanel>
+                            </RadioButton>
+
+                            <!-- Duplicate Finder -->
+                            <RadioButton Style="{StaticResource NavMenuButton}" 
+                                         GroupName="SidebarNav"
+                                         IsChecked="{Binding CurrentViewName, Converter={StaticResource StringEqualsConverter}, ConverterParameter=Duplicates, Mode=TwoWay}"
+                                         Command="{Binding NavigateCommand}" CommandParameter="Duplicates">
+                                <StackPanel Orientation="Horizontal">
+                                    <Path Data="{StaticResource IconDuplicate}" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" Width="15" Height="15" Stretch="Uniform" Margin="0,0,12,0" />
+                                    <TextBlock Text="Tìm file trùng lặp" />
+                                </StackPanel>
+                            </RadioButton>
+
+                            <!-- Folder Analyzer -->
+                            <RadioButton Style="{StaticResource NavMenuButton}" 
+                                         GroupName="SidebarNav"
+                                         IsChecked="{Binding CurrentViewName, Converter={StaticResource StringEqualsConverter}, ConverterParameter=FolderAnalyzer, Mode=TwoWay}"
+                                         Command="{Binding NavigateCommand}" CommandParameter="FolderAnalyzer">
+                                <StackPanel Orientation="Horizontal">
+                                    <Path Data="{StaticResource IconFolderAnalyzer}" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" Width="15" Height="15" Stretch="Uniform" Margin="0,0,12,0" />
+                                    <TextBlock Text="Phân tích thư mục" />
+                                </StackPanel>
+                            </RadioButton>
+
+                            <!-- Safe Cleanup -->
+                            <RadioButton Style="{StaticResource NavMenuButton}" 
+                                         GroupName="SidebarNav"
+                                         IsChecked="{Binding CurrentViewName, Converter={StaticResource StringEqualsConverter}, ConverterParameter=SafeCleanup, Mode=TwoWay}"
+                                         Command="{Binding NavigateCommand}" CommandParameter="SafeCleanup">
+                                <StackPanel Orientation="Horizontal">
+                                    <Path Data="{StaticResource IconSafeCleanup}" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" Width="15" Height="15" Stretch="Uniform" Margin="0,0,12,0" />
+                                    <TextBlock Text="Dọn dẹp an toàn" />
+                                </StackPanel>
+                            </RadioButton>
+
+                            <!-- Separator -->
+                            <Border Height="1" Background="{StaticResource BrushBorder}" Margin="16,8" />
+
+                            <!-- Scan History -->
+                            <RadioButton Style="{StaticResource NavMenuButton}" 
+                                         GroupName="SidebarNav"
+                                         IsChecked="{Binding CurrentViewName, Converter={StaticResource StringEqualsConverter}, ConverterParameter=History, Mode=TwoWay}"
+                                         Command="{Binding NavigateCommand}" CommandParameter="History">
+                                <StackPanel Orientation="Horizontal">
+                                    <Path Data="{StaticResource IconHistory}" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" Width="15" Height="15" Stretch="Uniform" Margin="0,0,12,0" />
+                                    <TextBlock Text="Lịch sử quét" />
+                                </StackPanel>
+                            </RadioButton>
+
+                            <!-- Reports -->
+                            <RadioButton Style="{StaticResource NavMenuButton}" 
+                                         GroupName="SidebarNav"
+                                         IsChecked="{Binding CurrentViewName, Converter={StaticResource StringEqualsConverter}, ConverterParameter=Reports, Mode=TwoWay}"
+                                         Command="{Binding NavigateCommand}" CommandParameter="Reports">
+                                <StackPanel Orientation="Horizontal">
+                                    <Path Data="{StaticResource IconReports}" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" Width="15" Height="15" Stretch="Uniform" Margin="0,0,12,0" />
+                                    <TextBlock Text="Báo cáo" />
+                                </StackPanel>
+                            </RadioButton>
+
+                            <!-- Settings -->
+                            <RadioButton Style="{StaticResource NavMenuButton}" 
+                                         GroupName="SidebarNav"
+                                         IsChecked="{Binding CurrentViewName, Converter={StaticResource StringEqualsConverter}, ConverterParameter=Settings, Mode=TwoWay}"
+                                         Command="{Binding NavigateCommand}" CommandParameter="Settings">
+                                <StackPanel Orientation="Horizontal">
+                                    <Path Data="{StaticResource IconSettings}" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" Width="15" Height="15" Stretch="Uniform" Margin="0,0,12,0" />
+                                    <TextBlock Text="Cài đặt" />
+                                </StackPanel>
+                            </RadioButton>
+
+                            <!-- Software Update -->
+                            <RadioButton Style="{StaticResource NavMenuButton}" 
+                                         GroupName="SidebarNav"
+                                         IsChecked="{Binding CurrentViewName, Converter={StaticResource StringEqualsConverter}, ConverterParameter=Update, Mode=TwoWay}"
+                                         Command="{Binding NavigateCommand}" CommandParameter="Update">
+                                <StackPanel Orientation="Horizontal">
+                                    <Path Data="{StaticResource IconUpdate}" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" Width="15" Height="15" Stretch="Uniform" Margin="0,0,12,0" />
+                                    <TextBlock Text="Cập nhật" />
+                                </StackPanel>
+                            </RadioButton>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <!-- Bottom About Button -->
+                    <Border Grid.Row="1" BorderBrush="{StaticResource BrushBorder}" BorderThickness="0,1,0,0" Padding="8,8">
+                        <RadioButton Style="{StaticResource NavMenuButton}" 
+                                     GroupName="SidebarNav"
+                                     IsChecked="{Binding CurrentViewName, Converter={StaticResource StringEqualsConverter}, ConverterParameter=About, Mode=TwoWay}"
+                                     Command="{Binding NavigateCommand}" CommandParameter="About">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="{StaticResource IconAbout}" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" Width="15" Height="15" Stretch="Uniform" Margin="0,0,12,0" />
+                                <TextBlock Text="Giới thiệu" />
+                            </StackPanel>
+                        </RadioButton>
+                    </Border>
+                </Grid>
+            </Border>
+
+            <!-- Dynamic View Area -->
+            <ContentControl Grid.Column="1" Content="{Binding CurrentViewModel}">
+                <ContentControl.Resources>
+                    <DataTemplate DataType="{x:Type viewmodels:DashboardViewModel}">
+                        <views:DashboardView />
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type viewmodels:StorageScanViewModel}">
+                        <views:StorageScanView />
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type viewmodels:BigFileHunterViewModel}">
+                        <views:BigFileHunterView />
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type viewmodels:DuplicateFinderViewModel}">
+                        <views:DuplicateFinderView />
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type viewmodels:FolderAnalyzerViewModel}">
+                        <views:FolderAnalyzerView />
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type viewmodels:SafeCleanupViewModel}">
+                        <views:SafeCleanupView />
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type viewmodels:ScanHistoryViewModel}">
+                        <views:ScanHistoryView />
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type viewmodels:ReportsViewModel}">
+                        <views:ReportsView />
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type viewmodels:SettingsViewModel}">
+                        <views:SettingsView />
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type viewmodels:AboutViewModel}">
+                        <views:AboutView />
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type viewmodels:UpdateViewModel}">
+                        <views:UpdateView />
+                    </DataTemplate>
+                </ContentControl.Resources>
+            </ContentControl>
+        </Grid>
+    </Grid>
+</Window>

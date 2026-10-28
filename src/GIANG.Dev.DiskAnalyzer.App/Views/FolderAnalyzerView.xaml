@@ -1,0 +1,150 @@
+<UserControl x:Class="GIANG.Dev.DiskAnalyzer.App.Views.FolderAnalyzerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:GIANG.Dev.DiskAnalyzer.App.Controls"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" 
+             d:DesignHeight="720" d:DesignWidth="1000">
+
+    <Grid Margin="24,18,24,20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <TextBlock Grid.Row="0" Text="PHÂN TÍCH CẤU TRÚC THƯ MỤC &amp; BIỂU ĐỒ TREEMAP (FOLDER ANALYZER)" 
+                   FontSize="18" FontWeight="Bold" Foreground="{StaticResource BrushNeonCyan}" Margin="0,0,0,16" />
+
+        <!-- Control Bar -->
+        <Border Grid.Row="1" Background="{StaticResource BrushCard}" BorderBrush="{StaticResource BrushBorder}" BorderThickness="1" CornerRadius="8" Padding="16" Margin="0,0,0,14">
+            <StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox Grid.Column="0" Text="{Binding TargetPath, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource CyberTextBox}" Margin="0,0,10,0" VerticalAlignment="Center" />
+
+                    <Button Grid.Column="1" Style="{StaticResource NeonSecondaryButton}" Command="{Binding BrowseFolderCommand}" Margin="0,0,10,0">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource IconOpenFolder}" Fill="{StaticResource BrushNeonCyan}" Width="14" Height="14" Stretch="Uniform" Margin="0,0,6,0" />
+                            <TextBlock Text="Chọn thư mục" />
+                        </StackPanel>
+                    </Button>
+
+                    <Button Grid.Column="2" Style="{StaticResource NeonPrimaryButton}" Command="{Binding StartAnalysisCommand}" Margin="0,0,8,0">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource IconFolderAnalyzer}" Fill="{StaticResource BrushNeonCyan}" Width="14" Height="14" Stretch="Uniform" Margin="0,0,6,0" />
+                            <TextBlock Text="Phân tích thư mục" />
+                        </StackPanel>
+                    </Button>
+
+                    <Button Grid.Column="3" Style="{StaticResource NeonDangerButton}" Command="{Binding CancelAnalysisCommand}" IsEnabled="{Binding IsAnalyzing}">
+                        <TextBlock Text="Hủy" />
+                    </Button>
+                </Grid>
+
+                <!-- Navigation & Breadcrumb -->
+                <Grid Margin="0,14,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Button Grid.Column="0" Style="{StaticResource NeonSecondaryButton}" Command="{Binding GoBackCommand}" IsEnabled="{Binding CanGoBack}" Margin="0,0,12,0" Padding="12,5">
+                        <TextBlock Text="← Quay lại cấp trên" />
+                    </Button>
+
+                    <TextBlock Grid.Column="1" Text="{Binding CurrentBreadcrumb, StringFormat={}Vị trí hiện tại: {0}}" Foreground="{StaticResource BrushNeonCyan}" FontWeight="SemiBold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+
+                    <TextBlock Grid.Column="2" Text="{Binding StatusMessage}" Foreground="{StaticResource BrushTextSecondary}" VerticalAlignment="Center" />
+                </Grid>
+            </StackPanel>
+        </Border>
+
+        <!-- Progress Bar -->
+        <ProgressBar Grid.Row="2" Style="{StaticResource CyberProgressBar}" IsIndeterminate="{Binding IsAnalyzing}" Height="4" Margin="0,0,0,14" />
+
+        <!-- Split Treemap & Folder DataGrid -->
+        <Grid Grid.Row="3">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" MinHeight="160" />
+                <RowDefinition Height="8" />
+                <RowDefinition Height="*" MinHeight="160" />
+            </Grid.RowDefinitions>
+
+            <!-- Treemap View with Empty State -->
+            <Border Grid.Row="0" Background="{StaticResource BrushPanel}" BorderBrush="{StaticResource BrushBorder}" BorderThickness="1" CornerRadius="8" Padding="8">
+                <Grid>
+                    <controls:TreemapControl Nodes="{Binding TreemapNodes}" NodeClickCommand="{Binding TreemapNodeClickedCommand}" />
+
+                    <!-- Empty State Overlay for Treemap -->
+                    <Border Background="{StaticResource BrushPanel}"
+                            Visibility="{Binding TreemapNodes.Count, Converter={StaticResource EmptyToVisibilityConverter}}"
+                            IsHitTestVisible="False">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20">
+                            <Path Data="{StaticResource IconFolderAnalyzer}" Fill="{StaticResource BrushBorderBright}" Width="48" Height="48" Stretch="Uniform" HorizontalAlignment="Center" Margin="0,0,0,14" />
+                            <TextBlock Text="CHƯA CÓ BIỂU ĐỒ HÌNH HỌC TREEMAP" FontWeight="Bold" FontSize="15" Foreground="{StaticResource BrushTextSecondary}" HorizontalAlignment="Center" Margin="0,0,0,6" />
+                            <TextBlock Text="Chọn đường dẫn thư mục và nhấn 'Phân tích thư mục' để trực quan hóa dung lượng." Foreground="{StaticResource BrushTextMuted}" HorizontalAlignment="Center" TextAlignment="Center" />
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Border>
+
+            <!-- Splitter -->
+            <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" Background="Transparent" />
+
+            <!-- Subfolders DataGrid with Empty State -->
+            <Border Grid.Row="2" Background="{StaticResource BrushPanel}" BorderBrush="{StaticResource BrushBorder}" BorderThickness="1" CornerRadius="8" Padding="14">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Text="DANH SÁCH THƯ MỤC CON (NHẤP ĐÚP ĐỂ ĐI SÂU VÀO CẤP TRONG)" FontWeight="Bold" FontSize="13" Foreground="{StaticResource BrushNeonPurple}" Margin="0,0,0,10" />
+
+                    <Grid Grid.Row="1">
+                        <DataGrid ItemsSource="{Binding SubFolders}" SelectedItem="{Binding SelectedSubFolder}">
+                            <DataGrid.InputBindings>
+                                <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding DrillDownCommand}" CommandParameter="{Binding SelectedSubFolder}" />
+                            </DataGrid.InputBindings>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="TÊN THƯ MỤC" Binding="{Binding Name}" Width="2*" />
+                                <DataGridTextColumn Header="DUNG LƯỢNG" Binding="{Binding SizeFormatted}" Width="120" />
+                                <DataGridTextColumn Header="TỶ LỆ (% THƯ MỤC GỐC)" Binding="{Binding PercentageFormatted}" Width="160" />
+                                <DataGridTextColumn Header="SỐ FILE" Binding="{Binding FileCount, StringFormat={}{0:N0}}" Width="90" />
+                                <DataGridTextColumn Header="SỐ THƯ MỤC CON" Binding="{Binding SubFolderCount, StringFormat={}{0:N0}}" Width="120" />
+                                <DataGridTextColumn Header="ĐƯỜNG DẪN ĐẦY ĐỦ" Binding="{Binding FullPath}" Width="3*" />
+                            </DataGrid.Columns>
+                            <DataGrid.ContextMenu>
+                                <ContextMenu Background="{StaticResource BrushPanel}" Foreground="{StaticResource BrushTextPrimary}">
+                                    <MenuItem Header="Đi sâu vào thư mục này (Drill-down)" Command="{Binding DrillDownCommand}" CommandParameter="{Binding SelectedSubFolder}" />
+                                    <MenuItem Header="Mở vị trí trong File Explorer" Command="{Binding OpenInExplorerCommand}" CommandParameter="{Binding SelectedSubFolder}" />
+                                </ContextMenu>
+                            </DataGrid.ContextMenu>
+                        </DataGrid>
+
+                        <!-- Empty State Overlay for Subfolders -->
+                        <Border Background="{StaticResource BrushPanel}"
+                                Visibility="{Binding SubFolders.Count, Converter={StaticResource EmptyToVisibilityConverter}}"
+                                IsHitTestVisible="False">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20">
+                                <TextBlock Text="CHƯA CÓ DỮ LIỆU THƯ MỤC CON" FontWeight="Bold" FontSize="14" Foreground="{StaticResource BrushTextSecondary}" HorizontalAlignment="Center" Margin="0,0,0,6" />
+                                <TextBlock Text="Kết quả phân tích thư mục con sẽ hiển thị tại đây." Foreground="{StaticResource BrushTextMuted}" HorizontalAlignment="Center" TextAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

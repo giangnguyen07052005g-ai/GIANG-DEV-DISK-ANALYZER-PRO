@@ -1,0 +1,108 @@
+<UserControl x:Class="GIANG.Dev.DiskAnalyzer.App.Views.AboutView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:components="clr-namespace:GIANG.Dev.DiskAnalyzer.App.Views.Components"
+             mc:Ignorable="d" 
+             d:DesignHeight="720" d:DesignWidth="1000">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Margin="24,18,24,30">
+            <StackPanel MaxWidth="800" HorizontalAlignment="Left">
+
+                <!-- Logo & Brand Banner -->
+                <Border Background="{StaticResource BrushCard}" BorderBrush="{StaticResource BrushBorder}" BorderThickness="1" CornerRadius="10" Padding="28" Margin="0,0,0,20">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Custom GIANG DEV Exclusive Logo Emblem -->
+                        <components:GiangDevLogo Grid.Column="0" Width="82" Height="82" Margin="0,0,24,0" VerticalAlignment="Center" />
+
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="GIANG DEV" FontSize="26" FontWeight="Black" Foreground="{StaticResource BrushNeonCyan}" />
+                                <Border Background="#281A08" BorderBrush="{StaticResource BrushNeonAmber}" BorderThickness="1" CornerRadius="4" Padding="6,2" Margin="12,0,0,0" VerticalAlignment="Center">
+                                    <TextBlock Text="ADMINISTRATOR" FontSize="10" FontWeight="Black" Foreground="{StaticResource BrushNeonAmber}" />
+                                </Border>
+                            </StackPanel>
+                            <TextBlock Text="DISK ANALYZER PRO" FontSize="20" FontWeight="Bold" Foreground="{StaticResource BrushTextPrimary}" Margin="0,2,0,8" />
+                            <TextBlock Text="Phần mềm phân tích dung lượng ổ đĩa, săn file lớn, tìm file trùng lặp và dọn dẹp hệ thống an toàn hàng đầu." Foreground="{StaticResource BrushTextSecondary}" FontSize="13" TextWrapping="Wrap" />
+                        </StackPanel>
+
+                        <Border Grid.Column="2" Background="#162338" BorderBrush="{StaticResource BrushNeonCyan}" BorderThickness="1" CornerRadius="6" Padding="14,8" VerticalAlignment="Center">
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock Text="{Binding Version}" Foreground="{StaticResource BrushNeonCyan}" FontWeight="Bold" FontSize="14" HorizontalAlignment="Center" />
+                                <TextBlock Text="COMMERCIAL PRO" Foreground="{StaticResource BrushNeonPurple}" FontSize="9.5" FontWeight="SemiBold" HorizontalAlignment="Center" Margin="0,2,0,0" />
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <!-- System Info Card -->
+                <Border Background="{StaticResource BrushPanel}" BorderBrush="{StaticResource BrushBorder}" BorderThickness="1" CornerRadius="8" Padding="20" Margin="0,0,0,16">
+                    <StackPanel>
+                        <TextBlock Text="THÔNG TIN MÔI TRƯỜNG THI HÀNH" FontSize="14" FontWeight="Bold" Foreground="{StaticResource BrushNeonPurple}" Margin="0,0,0,12" />
+
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="200" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Nền tảng Runtime:" Foreground="{StaticResource BrushTextSecondary}" />
+                            <TextBlock Grid.Column="1" Text="{Binding RuntimeInfo}" Foreground="{StaticResource BrushTextPrimary}" FontWeight="SemiBold" />
+                        </Grid>
+
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="200" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Hệ điều hành:" Foreground="{StaticResource BrushTextSecondary}" />
+                            <TextBlock Grid.Column="1" Text="{Binding OsInfo}" Foreground="{StaticResource BrushTextPrimary}" FontWeight="SemiBold" />
+                        </Grid>
+
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="200" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Trạng thái phân quyền:" Foreground="{StaticResource BrushTextSecondary}" />
+                            <TextBlock Grid.Column="1" Text="{Binding TierStatus}" Foreground="{StaticResource BrushNeonGreen}" FontWeight="SemiBold" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Core Safety Guarantees Card -->
+                <Border Background="{StaticResource BrushPanel}" BorderBrush="{StaticResource BrushBorder}" BorderThickness="1" CornerRadius="8" Padding="20" Margin="0,0,0,16">
+                    <StackPanel>
+                        <TextBlock Text="CAM KẾT NGUYÊN TẮC AN TOÀN HỆ THỐNG" FontSize="14" FontWeight="Bold" Foreground="{StaticResource BrushNeonCyan}" Margin="0,0,0,12" />
+
+                        <TextBlock Text="• Không tạo số liệu giả, thanh tiến trình giả hoặc nút bấm chỉ để trình diễn." Foreground="{StaticResource BrushTextSecondary}" Margin="0,0,0,6" />
+                        <TextBlock Text="• Tuyệt đối không xóa bất kỳ file nào khi người dùng chưa xem lại và xác nhận lần cuối." Foreground="{StaticResource BrushTextSecondary}" Margin="0,0,0,6" />
+                        <TextBlock Text="• Ưu tiên tối đa chuyển file vào Thùng rác (Recycle Bin) để có thể khôi phục." Foreground="{StaticResource BrushTextSecondary}" Margin="0,0,0,6" />
+                        <TextBlock Text="• Bảo vệ nghiêm ngặt các thư mục hệ thống Windows, Program Files và Registry." Foreground="{StaticResource BrushTextSecondary}" Margin="0,0,0,6" />
+                        <TextBlock Text="• Thuật toán băm SHA-256 streaming buffer không ngốn RAM và chống treo giao diện UI." Foreground="{StaticResource BrushTextSecondary}" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Developer Credits & License -->
+                <Border Background="{StaticResource BrushPanel}" BorderBrush="{StaticResource BrushBorder}" BorderThickness="1" CornerRadius="8" Padding="20">
+                    <StackPanel>
+                        <TextBlock Text="THÔNG TIN BẢN QUYỀN &amp; PHÁT TRIỂN" FontSize="14" FontWeight="Bold" Foreground="{StaticResource BrushNeonAmber}" Margin="0,0,0,12" />
+
+                        <TextBlock Text="{Binding Disclaimer}" Foreground="{StaticResource BrushTextSecondary}" TextWrapping="Wrap" LineHeight="20" Margin="0,0,0,14" />
+
+                        <TextBlock Text="Tác giả / Nhà phát triển: GIANG DEV" FontWeight="SemiBold" Foreground="{StaticResource BrushTextPrimary}" />
+                        <TextBlock Text="Phần mềm Windows Desktop xây dựng với C# .NET 8 LTS &amp; WPF MVVM" Foreground="{StaticResource BrushTextSecondary}" FontSize="12" Margin="0,4,0,0" />
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</UserControl>

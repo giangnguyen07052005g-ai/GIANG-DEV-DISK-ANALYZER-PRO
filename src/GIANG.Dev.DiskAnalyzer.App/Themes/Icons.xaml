@@ -1,0 +1,70 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Dashboard / Gauge Icon -->
+    <PathGeometry x:Key="IconDashboard" Figures="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" />
+
+    <!-- Storage / Hard Drive Icon -->
+    <PathGeometry x:Key="IconHardDrive" Figures="M2 7h20v10H2V7zm2 2v6h16V9H4zm13 2h2v2h-2v-2z" />
+
+    <!-- Scan / Search Folder Icon -->
+    <PathGeometry x:Key="IconScan" Figures="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+
+    <!-- Big File / Target Icon -->
+    <PathGeometry x:Key="IconBigFiles" Figures="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
+
+    <!-- Duplicate / Copy Layers Icon -->
+    <PathGeometry x:Key="IconDuplicate" Figures="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" />
+
+    <!-- Folder Analyzer / Treemap Icon -->
+    <PathGeometry x:Key="IconFolderAnalyzer" Figures="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6 10H4v-4h10v4zm6 0h-4v-4h4v4zm0-6H4V8h16v2z" />
+
+    <!-- Safe Cleanup / Shield Broom Icon -->
+    <PathGeometry x:Key="IconSafeCleanup" Figures="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-1 6h2v6h-2V7zm0 8h2v2h-2v-2z" />
+
+    <!-- Scan History / Clock Icon -->
+    <PathGeometry x:Key="IconHistory" Figures="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.954 8.954 0 0 0 13 21a9 9 0 0 0 0-18zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z" />
+
+    <!-- Reports / Document Chart Icon -->
+    <PathGeometry x:Key="IconReports" Figures="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
+
+    <!-- Settings / Cog Icon -->
+    <PathGeometry x:Key="IconSettings" Figures="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54A.484.484 0 0 0 14 2h-4c-.25 0-.46.18-.49.42l-.36 2.54c-.59.24-1.13.56-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.63 8.47a.49.49 0 0 0 .12.61l2.03 1.58c-.05.3-.07.63-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z" />
+
+    <!-- About / Info Icon -->
+    <PathGeometry x:Key="IconAbout" Figures="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
+
+    <!-- Play / Start Icon -->
+    <PathGeometry x:Key="IconPlay" Figures="M8 5v14l11-7z" />
+
+    <!-- Pause Icon -->
+    <PathGeometry x:Key="IconPause" Figures="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+
+    <!-- Stop / Cancel Icon -->
+    <PathGeometry x:Key="IconStop" Figures="M6 6h12v12H6z" />
+
+    <!-- Refresh Icon -->
+    <PathGeometry x:Key="IconRefresh" Figures="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" />
+
+    <!-- Open Folder Explorer Icon -->
+    <PathGeometry x:Key="IconOpenFolder" Figures="M20 6h-8l-2-2H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm0 12H4V8h16v10z" />
+
+    <!-- Trash / Delete Icon -->
+    <PathGeometry x:Key="IconTrash" Figures="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+
+    <!-- Export Icon -->
+    <PathGeometry x:Key="IconExport" Figures="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
+
+    <!-- Window Control: Close -->
+    <PathGeometry x:Key="IconClose" Figures="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+
+    <!-- Window Control: Maximize -->
+    <PathGeometry x:Key="IconMaximize" Figures="M4 4h16v16H4V4zm2 4v10h12V8H6z" />
+
+    <!-- Window Control: Minimize -->
+    <PathGeometry x:Key="IconMinimize" Figures="M6 19h12v2H6z" />
+
+    <!-- Update / Cloud Download Sync Icon -->
+    <PathGeometry x:Key="IconUpdate" Figures="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z" />
+
+</ResourceDictionary>

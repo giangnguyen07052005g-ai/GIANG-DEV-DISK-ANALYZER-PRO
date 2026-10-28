@@ -1,0 +1,196 @@
+<UserControl x:Class="GIANG.Dev.DiskAnalyzer.App.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" 
+             d:DesignHeight="720" d:DesignWidth="1000">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Margin="24,18,24,30">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <TextBlock Grid.Row="0" Text="CÀI ĐẶT HỆ THỐNG &amp; AN TOÀN (SETTINGS)" 
+                       FontSize="18" FontWeight="Bold" Foreground="{StaticResource BrushNeonCyan}" Margin="0,0,0,16" />
+
+            <!-- General & Safety Options Card -->
+            <Border Grid.Row="1" Background="{StaticResource BrushCard}" BorderBrush="{StaticResource BrushBorder}" BorderThickness="1" CornerRadius="8" Padding="18" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="CẤU HÌNH AN TOÀN &amp; HIỆU NĂNG" FontSize="14" FontWeight="Bold" Foreground="{StaticResource BrushNeonPurple}" Margin="0,0,0,14" />
+
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="280" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Cơ chế xóa an toàn:" Foreground="{StaticResource BrushTextSecondary}" VerticalAlignment="Center" />
+                        <CheckBox Grid.Column="1" Content="Mặc định chuyển file vào Thùng rác (Windows Recycle Bin)" IsChecked="{Binding UseRecycleBin}" Style="{StaticResource CyberCheckBox}" />
+                    </Grid>
+
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="280" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Hộp thoại cảnh báo:" Foreground="{StaticResource BrushTextSecondary}" VerticalAlignment="Center" />
+                        <CheckBox Grid.Column="1" Content="Luôn yêu cầu xác nhận trước khi xóa file hoặc dọn dẹp" IsChecked="{Binding ConfirmBeforeDeletion}" Style="{StaticResource CyberCheckBox}" />
+                    </Grid>
+
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="280" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Số tác vụ quét song song:" Foreground="{StaticResource BrushTextSecondary}" VerticalAlignment="Center" />
+                        <TextBox Grid.Column="1" Text="{Binding MaxDegreeOfParallelism, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource CyberTextBox}" Width="80" HorizontalAlignment="Left" />
+                    </Grid>
+
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="280" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Giới hạn số bản ghi lịch sử:" Foreground="{StaticResource BrushTextSecondary}" VerticalAlignment="Center" />
+                        <TextBox Grid.Column="1" Text="{Binding MaxHistoryEntries, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource CyberTextBox}" Width="80" HorizontalAlignment="Left" />
+                    </Grid>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="280" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Giao diện &amp; Chủ đề:" Foreground="{StaticResource BrushTextSecondary}" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Text="Cyberpunk Neon (Đen xanh đậm, viền phát sáng cyan &amp; tím)" Foreground="{StaticResource BrushNeonCyan}" FontWeight="SemiBold" VerticalAlignment="Center" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Exclusions Card -->
+            <Border Grid.Row="2" Background="{StaticResource BrushCard}" BorderBrush="{StaticResource BrushBorder}" BorderThickness="1" CornerRadius="8" Padding="18" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="QUY TẮC LOẠI TRỪ (EXCLUSIONS)" FontSize="14" FontWeight="Bold" Foreground="{StaticResource BrushNeonCyan}" Margin="0,0,0,14" />
+
+                    <!-- Excluded Paths -->
+                    <TextBlock Text="Đường dẫn được bỏ qua khi quét (tránh thư mục hệ thống nhạy cảm):" Foreground="{StaticResource BrushTextSecondary}" Margin="0,0,0,6" />
+                    <Grid Margin="0,0,0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox Grid.Column="0" Text="{Binding NewExcludedPath, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource CyberTextBox}" Margin="0,0,10,0" Tag="Thêm đường dẫn..." />
+                        <Button Grid.Column="1" Style="{StaticResource NeonSecondaryButton}" Command="{Binding BrowseExcludedFolderCommand}" Margin="0,0,8,0">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="{StaticResource IconOpenFolder}" Fill="{StaticResource BrushNeonCyan}" Width="13" Height="13" Stretch="Uniform" Margin="0,0,6,0" />
+                                <TextBlock Text="Chọn..." />
+                            </StackPanel>
+                        </Button>
+                        <Button Grid.Column="2" Style="{StaticResource NeonSecondaryButton}" Command="{Binding AddExcludedPathCommand}">
+                            <TextBlock Text="Thêm đường dẫn" />
+                        </Button>
+                    </Grid>
+
+                    <ListBox ItemsSource="{Binding ExcludedPaths}" MaxHeight="100" Background="{StaticResource BrushPanel}" BorderBrush="{StaticResource BrushBorder}" Margin="0,0,0,14">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding}" Foreground="{StaticResource BrushTextPrimary}" VerticalAlignment="Center" />
+                                    <Button Grid.Column="1" 
+                                            Style="{StaticResource NeonDangerButton}" 
+                                            Command="{Binding DataContext.RemoveExcludedPathCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                                            CommandParameter="{Binding}" 
+                                            Padding="8,2" FontSize="11">
+                                        <TextBlock Text="Xóa" />
+                                    </Button>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
+                    <!-- Excluded Extensions -->
+                    <TextBlock Text="Định dạng file được bỏ qua (vd: .sys, .dll):" Foreground="{StaticResource BrushTextSecondary}" Margin="0,0,0,6" />
+                    <Grid Margin="0,0,0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox Grid.Column="0" Text="{Binding NewExcludedExtension, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource CyberTextBox}" Margin="0,0,10,0" Tag="Thêm đuôi mở rộng (vd: .sys)..." />
+                        <Button Grid.Column="1" Style="{StaticResource NeonSecondaryButton}" Command="{Binding AddExcludedExtensionCommand}">
+                            <TextBlock Text="Thêm đuôi file" />
+                        </Button>
+                    </Grid>
+
+                    <ListBox ItemsSource="{Binding ExcludedExtensions}" MaxHeight="80" Background="{StaticResource BrushPanel}" BorderBrush="{StaticResource BrushBorder}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding}" Foreground="{StaticResource BrushTextPrimary}" VerticalAlignment="Center" />
+                                    <Button Grid.Column="1" 
+                                            Style="{StaticResource NeonDangerButton}" 
+                                            Command="{Binding DataContext.RemoveExcludedExtensionCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                                            CommandParameter="{Binding}" 
+                                            Padding="8,2" FontSize="11">
+                                        <TextBlock Text="Xóa" />
+                                    </Button>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </StackPanel>
+            </Border>
+
+            <!-- Product Tier Management Card (Free vs Pro preview) -->
+            <Border Grid.Row="3" Background="{StaticResource BrushCard}" BorderBrush="{StaticResource BrushBorder}" BorderThickness="1" CornerRadius="8" Padding="18" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="MÔ HÌNH PHÂN QUYỀN TÍNH NĂNG (TIER ARCHITECTURE)" FontSize="14" FontWeight="Bold" Foreground="{StaticResource BrushNeonAmber}" Margin="0,0,0,10" />
+
+                    <TextBlock Text="{Binding TierDisclaimer}" Foreground="{StaticResource BrushTextSecondary}" TextWrapping="Wrap" Margin="0,0,0,12" LineHeight="20" />
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <CheckBox Grid.Column="0" Content="Kích hoạt chế độ PRO (Thử nghiệm toàn bộ tính năng nâng cao)" IsChecked="{Binding IsProTier}" Style="{StaticResource CyberCheckBox}" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Text="Bao gồm quét trùng lặp không giới hạn, phân tích cấu trúc đa cấp chuyên sâu." Foreground="{StaticResource BrushNeonGreen}" Margin="20,0,0,0" VerticalAlignment="Center" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Action Buttons -->
+            <Grid Grid.Row="4" Margin="0,4,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Text="{Binding StatusMessage}" Foreground="{StaticResource BrushNeonCyan}" VerticalAlignment="Center" />
+
+                <Button Grid.Column="1" Style="{StaticResource NeonSecondaryButton}" Command="{Binding RestoreDefaultsCommand}" Margin="0,0,12,0" Padding="16,8">
+                    <TextBlock Text="Khôi phục mặc định" />
+                </Button>
+
+                <Button Grid.Column="2" Style="{StaticResource NeonPrimaryButton}" Command="{Binding SaveSettingsCommand}" Padding="20,8">
+                    <TextBlock Text="LƯU CÀI ĐẶT" FontWeight="Bold" />
+                </Button>
+            </Grid>
+        </Grid>
+    </ScrollViewer>
+</UserControl>
